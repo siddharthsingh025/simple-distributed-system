@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Distributed System UI</title>
+</head>
+<body>
+    <h1>UI for Distributed System</h1>
+    <div id="message"></div>
+
+    <script>
+        const ws = new WebSocket("ws://localhost:8080/ws");
+
+        ws.onmessage = function (event) {
+            const messageElement = document.getElementById("message");
+            messageElement.innerHTML = "Message from CLI: " + event.data;
+        };
+    </script>
+</body>
+</html>

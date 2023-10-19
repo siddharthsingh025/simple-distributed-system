@@ -1,40 +1,40 @@
-/*
-Copyright © 2023 NAME HERE <EMAIL ADDRESS>
-
-*/
 package cmd
 
 import (
+	"bytes"
 	"fmt"
+	"net/http"
 
 	"github.com/spf13/cobra"
 )
 
-// distributedCommandCmd represents the distributedCommand command
-var distributedCommandCmd = &cobra.Command{
-	Use:   "distributedCommand",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+// newCmd represents the new command
+var newCmd = &cobra.Command{
+	Use:   "new",
+	Short: "Send a new message from CLI to UI",
+	Long:  `This command sends a new message from the CLI to the UI submodule.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("distributedCommand called")
+		sendDataToUI()
 	},
 }
 
+func sendDataToUI() {
+	// Sending a POST request to the UI server
+	url := "http://localhost:8080/data"
+	var jsonStr = []byte(`{"message":"Hello from CLI"}`)
+	req, err := http.NewRequest("POST", url, bytes.NewBuffer(jsonStr))
+	req.Header.Set("Content-Type", "application/json")
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		fmt.Println("Error:", err)
+	}
+	defer resp.Body.Close()
+
+	fmt.Println("Sent data to UI")
+}
+
 func init() {
-	rootCmd.AddCommand(distributedCommandCmd)
-
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// distributedCommandCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// distributedCommandCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	rootCmd.AddCommand(newCmd)
 }
